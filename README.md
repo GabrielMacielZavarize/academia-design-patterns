@@ -34,8 +34,13 @@ _(A preencher quando os endpoints estiverem prontos)_
 ## 5. Patterns utilizados
 
 ### Builder
-- **Problema resolvido:** _(a preencher)_
-- **Classes envolvidas:** _(a preencher)_
+
+- Problema resolvido: um `Plano` tem vários atributos (nome, valor mensal, duração, lista de modalidades e horário livre), alguns obrigatórios e outros opcionais. Um construtor com todos esses parâmetros seria difícil de ler e fácil de errar (por exemplo, trocar a ordem de valores do mesmo tipo). Além disso, queremos garantir que nenhum plano inválido seja criado. O Builder separa a construção do objeto da sua representação final, montando o plano passo a passo e validando tudo antes de entregá-lo.
+### Classes envolvidas:
+
+- **Produto** – `Plano` (`model`): objeto final e imutável. Só é criado a partir de um PlanoBuilder.
+- **Builder** – `PlanoBuilder` (`builder`): interface fluente (`nome()`, `valorMensal()`, `duracaoMeses()`, `modalidade()`, `horarioLivre()`) que acumula os valores. O método `build()` valida as regras e cria o `Plano`.
+- **Diretor** – `DiretorPlanos` (`builder`): guarda as "receitas" dos planos (Mensal, Trimestral e Anual) e concentra em `planosDisponiveis()` a lista de todos os planos oferecidos. É um bean do Spring, usado pelos services e controllers.
 
 ### Observer
 - **Problema resolvido:** _(a preencher)_

@@ -6,7 +6,6 @@ import java.util.List;
 
 import br.com.academia.model.Plano;
 
-// BUILDER: monta o Plano passo a passo, com interface fluente (cada método retorna this).
 public class PlanoBuilder {
 
     private String nome;
@@ -30,7 +29,7 @@ public class PlanoBuilder {
         return this;
     }
 
-    // Adiciona UMA modalidade por chamada; pode ser chamado várias vezes
+    
     public PlanoBuilder modalidade(String modalidade) {
         this.modalidades.add(modalidade);
         return this;
@@ -41,7 +40,7 @@ public class PlanoBuilder {
         return this;
     }
 
-    // Valida tudo antes de criar o Plano: nunca existe Plano inválido
+    
     public Plano build() {
         if (nome == null || nome.isBlank()) {
             throw new IllegalStateException("O nome do plano é obrigatório.");
@@ -58,7 +57,7 @@ public class PlanoBuilder {
         return new Plano(this);
     }
 
-    // Getters: usados pelo construtor do Plano para ler os valores
+    
     public String getNome() {
         return nome;
     }

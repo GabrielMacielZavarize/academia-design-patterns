@@ -50,12 +50,13 @@ _(A preencher quando os endpoints estiverem prontos)_
 
 - **Modelo utilizado:** Claude Opus 5.5 (Anthropic)
 - Gabriel Maciel: Criação e configuração do projeto (Spring Boot, Maven Wrapper, `.gitignore`), estrutura do README, auxiliar na criação da entidade `Aluno` e `AlunoService`
+- Nicolas Machado (ChatGPT/Codex, OpenAI): Geração do código de `CheckIn`, `CheckInService`, controllers REST e tratamento de erros a partir das especificações do grupo.
 
 ## 7. Contribuição de cada integrante
 
 | Integrante | Contribuição |
 |---|---|
 | Gabriel Maciel | Criação do projeto, configuração inicial, README base e entidade `Aluno` |
-| Nicolas Machado | Entidade `CheckIn`, fluxo completo (endpoints) e exemplos de uso|
+| Nicolas Machado | Entidade `CheckIn`, `CheckInService`, controllers REST do fluxo completo, tratamento de erros e exemplos de uso |
 | Pedro Harter | Pattern Observer: interface de notificação e notificações concretas |
 | Wilian Vieira | Pattern Builder: `Plano` e `PlanoBuilder` |

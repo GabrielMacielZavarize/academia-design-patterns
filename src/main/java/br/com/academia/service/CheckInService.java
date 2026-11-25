@@ -9,16 +9,19 @@ import org.springframework.stereotype.Service;
 
 import br.com.academia.model.Aluno;
 import br.com.academia.model.CheckIn;
+import br.com.academia.observer.PublicadorCheckIn;
 
 @Service
 public class CheckInService {
 
     private final AlunoService alunoService;
+    private final PublicadorCheckIn publicadorCheckIn;
     private final List<CheckIn> checkIns = new ArrayList<>();
     private final AtomicLong proximoId = new AtomicLong(1);
 
-    public CheckInService(AlunoService alunoService) {
+    public CheckInService(AlunoService alunoService, PublicadorCheckIn publicadorCheckIn) {
         this.alunoService = alunoService;
+        this.publicadorCheckIn = publicadorCheckIn;
     }
 
     public CheckIn registrar(Long alunoId) {
@@ -31,7 +34,8 @@ public class CheckInService {
             checkIn = new CheckIn(proximoId.getAndIncrement(), aluno, LocalDateTime.now());
             checkIns.add(checkIn);
         }
-        // OBSERVER (Pedro): notificar os observadores aqui
+        // OBSERVER: avisa todos os observadores registrados que um check-in aconteceu
+        publicadorCheckIn.notificar(checkIn);
         return checkIn;
     }
 

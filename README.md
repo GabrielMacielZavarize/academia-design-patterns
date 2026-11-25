@@ -29,7 +29,152 @@ A aplicação sobe em `http://localhost:8080`.
 
 ## 4. Exemplos de uso
 
-_(A preencher quando os endpoints estiverem prontos)_
+Consulte os planos, matricule um aluno e registre o check-in para disparar as notificações.
+
+Com a aplicação rodando na porta 8080, abra outro terminal e siga os passos em ordem. Escolha **um comando por passo**, PowerShell ou curl. No Linux ou macOS, use `curl` no lugar de `curl.exe`.
+
+**Dados em memória.** Ao reiniciar a aplicação, as matrículas e os check-ins são apagados. Comece com uma aplicação recém-iniciada para que Ana receba o ID `1`.
+
+As respostas abaixo resumem o JSON da API. O PowerShell 5.1 pode exibir listas com os campos `value` e `Count` e mostrar alguns acentos incorretamente. O `curl.exe -i` exibe o status HTTP e o corpo da resposta.
+
+### 1. Listar planos
+
+```powershell
+Invoke-RestMethod -Uri 'http://localhost:8080/planos' | ConvertTo-Json -Depth 5
+```
+
+```sh
+curl.exe -sS -i 'http://localhost:8080/planos'
+```
+
+**200 OK.** A lista contém os três planos criados pelo Builder.
+
+| Plano | Valor mensal (R$) | Duração | Modalidades | Horário livre |
+|---|---:|---:|---|---|
+| Mensal | 99,90 | 1 mês | Musculação | Não |
+| Trimestral | 89,90 | 3 meses | Musculação, Spinning | Não |
+| Anual | 79,90 | 12 meses | Musculação, Spinning, Funcional | Sim |
+
+### 2. Matricular Ana Souza no plano Mensal
+
+```powershell
+Invoke-RestMethod -Uri 'http://localhost:8080/alunos' -Method Post `
+    -ContentType 'application/json' `
+    -Body '{"nome":"Ana Souza","email":"ana@example.com","plano":"Mensal"}' |
+    ConvertTo-Json -Depth 5
+```
+
+```sh
+echo '{"nome":"Ana Souza","email":"ana@example.com","plano":"Mensal"}' | curl.exe -sS -i -H 'Content-Type: application/json' --data-binary '@-' 'http://localhost:8080/alunos'
+```
+
+**201 Created.** A resposta traz a aluna com o ID `1` e os dados completos do plano.
+
+```json
+{
+  "id": 1,
+  "nome": "Ana Souza",
+  "email": "ana@example.com",
+  "plano": {
+    "nome": "Mensal",
+    "valorMensal": 99.90,
+    "duracaoMeses": 1,
+    "modalidades": ["Musculação"],
+    "horarioLivre": false
+  }
+}
+```
+
+### 3. Listar alunos
+
+```powershell
+Invoke-RestMethod -Uri 'http://localhost:8080/alunos' | ConvertTo-Json -Depth 5
+```
+
+```sh
+curl.exe -sS -i 'http://localhost:8080/alunos'
+```
+
+**200 OK.** A lista contém uma aluna, Ana Souza (`id: 1`), com o plano Mensal.
+
+### 4. Registrar o check-in da aluna 1
+
+```powershell
+Invoke-RestMethod -Uri 'http://localhost:8080/alunos/1/checkins' -Method Post |
+    ConvertTo-Json -Depth 5
+```
+
+```sh
+curl.exe -sS -i -X POST 'http://localhost:8080/alunos/1/checkins'
+```
+
+**201 Created.** A resposta traz o check-in com `id: 1`, o objeto `aluno` completo e `dataHora`. No teste, `dataHora` foi `2026-11-24T21:44:56.5042569`.
+
+**Saída no terminal da aplicação.** Assim que o check-in é salvo, o Observer aciona as notificações do aluno e da recepção. O horário acompanha o momento do registro.
+
+```text
+[Aluno] Olá, Ana Souza! Check-in confirmado às 21:44. Bom treino!
+[Recepção] Ana Souza (Plano Mensal) entrou às 21:44.
+```
+
+### 5. Listar check-ins
+
+```powershell
+Invoke-RestMethod -Uri 'http://localhost:8080/checkins' | ConvertTo-Json -Depth 5
+```
+
+```sh
+curl.exe -sS -i 'http://localhost:8080/checkins'
+```
+
+**200 OK.** A lista contém o check-in `1` de Ana Souza, com a mesma `dataHora` retornada no passo anterior.
+
+### 6. Tentar matricular em um plano inexistente
+
+No PowerShell 5.1, o `catch` mostra o status HTTP e o corpo JSON da resposta de erro.
+
+```powershell
+try {
+    Invoke-RestMethod -Uri 'http://localhost:8080/alunos' -Method Post `
+        -ContentType 'application/json' `
+        -Body '{"nome":"Bruno Lima","email":"bruno@example.com","plano":"Premium"}' `
+        -ErrorAction Stop
+} catch {
+    [int]$_.Exception.Response.StatusCode
+    $_.ErrorDetails.Message
+}
+```
+
+```sh
+echo '{"nome":"Bruno Lima","email":"bruno@example.com","plano":"Premium"}' | curl.exe -sS -i -H 'Content-Type: application/json' --data-binary '@-' 'http://localhost:8080/alunos'
+```
+
+**400 Bad Request.**
+
+```json
+{"erro":"Plano não encontrado: Premium"}
+```
+
+### 7. Tentar registrar check-in de um aluno inexistente
+
+```powershell
+try {
+    Invoke-RestMethod -Uri 'http://localhost:8080/alunos/99/checkins' -Method Post -ErrorAction Stop
+} catch {
+    [int]$_.Exception.Response.StatusCode
+    $_.ErrorDetails.Message
+}
+```
+
+```sh
+curl.exe -sS -i -X POST 'http://localhost:8080/alunos/99/checkins'
+```
+
+**400 Bad Request.**
+
+```json
+{"erro":"Aluno não encontrado: 99"}
+```
 
 ## 5. Patterns utilizados
 

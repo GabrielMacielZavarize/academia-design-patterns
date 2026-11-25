@@ -49,7 +49,7 @@ _(A preencher quando os endpoints estiverem prontos)_
 ## 6. Declaração de uso de IA
 
 - **Modelo utilizado:** Claude Opus 5.5 (Anthropic)
-- **Partes em que foi utilizado:** _(a preencher ao final — ex.: planejamento da arquitetura, orientação na configuração do ambiente, revisão do README, ...)_
+- Gabriel Maciel: Criação e configuração do projeto (Spring Boot, Maven Wrapper, `.gitignore`), estrutura do README, auxiliar na criação da entidade `Aluno` e `AlunoService`
 
 ## 7. Contribuição de cada integrante
 

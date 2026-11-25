@@ -43,14 +43,24 @@ _(A preencher quando os endpoints estiverem prontos)_
 - **Diretor** – `DiretorPlanos` (`builder`): guarda as "receitas" dos planos (Mensal, Trimestral e Anual) e concentra em `planosDisponiveis()` a lista de todos os planos oferecidos. É um bean do Spring, usado pelos services e controllers.
 
 ### Observer
-- **Problema resolvido:** _(a preencher)_
-- **Classes envolvidas:** _(a preencher)_
+
+- **Problema resolvido:** quando um aluno faz check-in, várias partes do sistema precisam reagir (confirmar ao aluno, avisar a recepção etc.). Se o `CheckInService` chamasse cada notificação diretamente, ele ficaria acoplado a todas elas e precisaria ser alterado a cada notificação nova. O Observer resolve isso: o serviço apenas avisa que um check-in aconteceu, e todos os observadores registrados são notificados automaticamente, sem que o serviço saiba quem eles são.
+
+### Classes envolvidas:
+
+- **Sujeito** – `PublicadorCheckIn` (`observer`): guarda a lista de observadores e tem os métodos `adicionar()`, `remover()` e `notificar()`. Recebe pelo construtor todos os beans que implementam `ObservadorCheckIn` e os registra.
+- **Observador** – `ObservadorCheckIn` (`observer`): interface com o método `aoRegistrarCheckIn(CheckIn)`, contrato de toda notificação.
+- **Observadores concretos** – `NotificacaoAluno` e `NotificacaoRecepcao` (`observer`): imprimem no console a confirmação para o aluno e o aviso para a recepção.
+- **Quem dispara o evento** – `CheckInService` (`service`): após registrar o check-in, chama `publicadorCheckIn.notificar(checkIn)`. Conhece apenas o `PublicadorCheckIn`, nunca as notificações concretas.
+
+Para adicionar uma nova notificação, basta criar uma nova classe `@Component` que implementa `ObservadorCheckIn`: ela é registrada automaticamente no `PublicadorCheckIn`, sem alterar o `CheckInService`.
 
 ## 6. Declaração de uso de IA
 
 - **Modelo utilizado:** Claude Opus 5.5 (Anthropic)
 - Gabriel Maciel: Criação e configuração do projeto (Spring Boot, Maven Wrapper, `.gitignore`), estrutura do README, auxiliar na criação da entidade `Aluno` e `AlunoService`
 - Nicolas Machado (ChatGPT/Codex, OpenAI): Geração do código de `CheckIn`, `CheckInService`, controllers REST e tratamento de erros a partir das especificações do grupo.
+- Pedro Harter: Auxiliar na criação do pattern Observer (`ObservadorCheckIn`, `PublicadorCheckIn`, `NotificacaoAluno` e `NotificacaoRecepcao`) e na integração com o `CheckInService`.
 
 ## 7. Contribuição de cada integrante
 
@@ -58,5 +68,5 @@ _(A preencher quando os endpoints estiverem prontos)_
 |---|---|
 | Gabriel Maciel | Criação do projeto, configuração inicial, README base e entidade `Aluno` |
 | Nicolas Machado | Entidade `CheckIn`, `CheckInService`, controllers REST do fluxo completo, tratamento de erros e exemplos de uso |
-| Pedro Harter | Pattern Observer: interface de notificação e notificações concretas |
+| Pedro Harter | Pattern Observer: interface `ObservadorCheckIn`, sujeito `PublicadorCheckIn`, notificações `NotificacaoAluno` e `NotificacaoRecepcao` e integração com o `CheckInService` |
 | Wilian Vieira | Pattern Builder: `Plano` e `PlanoBuilder` |

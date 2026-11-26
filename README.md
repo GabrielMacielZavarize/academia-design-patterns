@@ -215,3 +215,13 @@ Para adicionar uma nova notificação, basta criar uma nova classe `@Component` 
 | Nicolas Machado | Entidade `CheckIn`, `CheckInService`, controllers REST do fluxo completo, tratamento de erros e exemplos de uso |
 | Pedro Harter | Pattern Observer: interface `ObservadorCheckIn`, sujeito `PublicadorCheckIn`, notificações `NotificacaoAluno` e `NotificacaoRecepcao` e integração com o `CheckInService` |
 | Wilian Vieira | Pattern Builder: `Plano` e `PlanoBuilder` |
+
+## 8. Parte 2: Extensão dos patterns (equipe extensora)
+
+**Equipe extensora:**
+
+| Integrante | Contribuição |
+|---|---|
+| João Vitor Pereira | Extensão dos patterns Builder e Observer (descrição detalhada abaixo) |
+
+**Extensão proposta:** _a definir (será descrita aqui conforme a implementação avançar)._
